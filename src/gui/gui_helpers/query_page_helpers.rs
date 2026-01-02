@@ -17,7 +17,6 @@ impl QueryPage {
         self.table_state = TableState::default();
         self.horizontal_scroll = 0;
         
-        // Load tables
         self.load_tables().await?;
         
         Ok(())
