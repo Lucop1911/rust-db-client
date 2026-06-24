@@ -9,6 +9,7 @@ use crossterm::{
 };
 use ratatui::{backend::CrosstermBackend, Terminal};
 use std::io;
+use std::time::{Duration, Instant};
 
 use gui::{App, AppState};
 
@@ -44,10 +45,9 @@ async fn run_app<B: ratatui::backend::Backend>(
     terminal: &mut Terminal<B>,
     app: &mut App,
 ) -> Result<()> {
+    let mut last_draw = Instant::now();
     loop {
-        terminal.draw(|f| app.render(f))?;
-
-        if event::poll(std::time::Duration::from_millis(100))? {
+        if event::poll(Duration::from_millis(10))? {
             if let Event::Key(key) = event::read()? {
                 if key.kind == crossterm::event::KeyEventKind::Press {
                     if (key.code == KeyCode::Esc || key.code == KeyCode::Char('q')) && app.state == AppState::ConnectionList {
@@ -56,6 +56,11 @@ async fn run_app<B: ratatui::backend::Backend>(
                     app.handle_input(key).await?;
                 }
             }
+            terminal.draw(|f| app.render(f))?;
+            last_draw = Instant::now();
+        } else if last_draw.elapsed() >= Duration::from_millis(66) {
+            terminal.draw(|f| app.render(f))?;
+            last_draw = Instant::now();
         }
     }
 }
