@@ -208,9 +208,9 @@ impl QueryPage {
         let query_block = Block::default()
             .borders(Borders::ALL)
             .title(if is_focused {
-                "SQL Query (Ctrl+Enter to Execute) [EDITING]"
+                "SQL Query (Ctrl+S to Execute) [EDITING]"
             } else {
-                "SQL Query (Ctrl+Enter to Execute)"
+                "SQL Query (Ctrl+S to Execute)"
             })
             .border_style(if is_focused {
                 Style::default()
